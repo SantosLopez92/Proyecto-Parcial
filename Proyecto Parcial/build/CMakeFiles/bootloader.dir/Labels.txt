@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+C:/Users/santo/practicas_micros_2026/ProyectoParcial/Proyecto Parcial/build/CMakeFiles/bootloader
+C:/Users/santo/practicas_micros_2026/ProyectoParcial/Proyecto Parcial/build/CMakeFiles/bootloader.rule
+C:/Users/santo/practicas_micros_2026/ProyectoParcial/Proyecto Parcial/build/CMakeFiles/bootloader-complete.rule
+C:/Users/santo/practicas_micros_2026/ProyectoParcial/Proyecto Parcial/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+C:/Users/santo/practicas_micros_2026/ProyectoParcial/Proyecto Parcial/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+C:/Users/santo/practicas_micros_2026/ProyectoParcial/Proyecto Parcial/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+C:/Users/santo/practicas_micros_2026/ProyectoParcial/Proyecto Parcial/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+C:/Users/santo/practicas_micros_2026/ProyectoParcial/Proyecto Parcial/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+C:/Users/santo/practicas_micros_2026/ProyectoParcial/Proyecto Parcial/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+C:/Users/santo/practicas_micros_2026/ProyectoParcial/Proyecto Parcial/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
