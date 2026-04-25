@@ -23,9 +23,9 @@
 #define tag "SSD1306"
 
 //Configuraciones para Leds
-#define LED_R 				GPIO_NUM_17 
-#define LED_G 				GPIO_NUM_5
-#define LED_B 				GPIO_NUM_18
+#define LED_R 				GPIO_NUM_19 //Led Rojo
+#define LED_G 				GPIO_NUM_18 //Led Verde
+#define LED_B 				GPIO_NUM_5  //Led Azul
 
 //Configuracion botones
 #define BTN_S 				GPIO_NUM_13//Boton siguiente Led
@@ -75,6 +75,7 @@ void in_leds(){
 
 }
 
+//Cambio de led prendido
 void control_leds(){
 	gpio_set_level(LED_R, 0); 
 	gpio_set_level(LED_G, 0); 
@@ -100,12 +101,14 @@ void app_main(void)
 	i2c_master_init(&dev, CONFIG_SDA_GPIO, CONFIG_SCL_GPIO, CONFIG_RESET_GPIO);
 	ssd1306_init(&dev, 128, 64);
 	center = 3;
+	
+	//Inicializacion de leds, adc y btns
 	in_leds();
 	in_adc();
 	in_btn();
 	
 	
-    // Bucle de lectura
+    // Bucle de trabajo
     while (1) {
         int raw = adc1_get_raw(ADC_CHANNEL);
 		
@@ -116,6 +119,7 @@ void app_main(void)
 				led_usado=0;
 			}
 			control_leds();
+			vTaskDelay(pdMS_TO_TICKS(300));
 		}
 		
 		// Mostrar resultados
@@ -123,6 +127,6 @@ void app_main(void)
 		ssd1306_clear_screen(&dev, false);
 		ssd1306_contrast(&dev, 0xff);
 		ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
