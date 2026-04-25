@@ -129,4 +129,4 @@ void app_main(void)
 		ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
         vTaskDelay(pdMS_TO_TICKS(500));
     }
-} prueba edición
+} 
