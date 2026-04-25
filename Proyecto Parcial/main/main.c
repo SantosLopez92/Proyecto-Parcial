@@ -1,4 +1,4 @@
-	#include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
@@ -36,7 +36,7 @@ int led_usado=0;
 
 
 
-//Inicialización BTN
+//InicializaciÃ³n BTN
 void in_btn(){
     gpio_reset_pin(BTN_S);
     gpio_set_direction(BTN_S,GPIO_MODE_INPUT);
@@ -48,14 +48,14 @@ void in_btn(){
 }
 
 
-//Inicialización Adc
+//InicializaciÃ³n Adc
 void in_adc(){
 	
 	adc1_config_width(ADC_WIDTH);
     adc1_config_channel_atten(ADC_CHANNEL, ADC_ATTEN);
 }
 
-//Inicialización Leds
+//InicializaciÃ³n Leds
 void in_leds(){
 
     gpio_reset_pin(LED_R);
@@ -99,7 +99,7 @@ void app_main(void)
 	in_adc();
 	in_btn();
 	
-	//Valores m�ximos de Rojo, Verde y Azul
+	//Valores máximos de Rojo, Verde y Azul
 	int RM=1240;
 	int GM=1000;
 	int BM=1195;
@@ -152,9 +152,34 @@ void app_main(void)
         
         
         if(gpio_get_level(BTN_R)==0){
-        	
-        	
+			
+        	if(r>80){
+				if(g>80 && b>80){
+					sprintf(lineChar, "Blanco");
+					} 
+				if(g>60 && g<=80 && b>20 && b<=40){
+					sprintf(lineChar, "Amarillo");
+					}
+				if(g>20 && g<=40 && b>20 && b<=40){
+					sprintf(lineChar, "Rojo");
+					}
+				}
+			
+        	if(r>50 && r<=70 && g>80 && b>20 && b<=40){
+				sprintf(lineChar, "Verde");
+				}
+			
+        	if(r>40 && r<=60 && g>80 && b>80){
+				sprintf(lineChar, "Cian");
+				}
+			
+        	if(r>20 && r<=40 && g>20 && g<=40 && b>60 && b<=80){
+				sprintf(lineChar, "Azul");
+				}
+			
+        	if(r<20 && g<20 && b<20){
+				sprintf(lineChar, "Negro");
+				}
 		}  
-        
     }
 } 
