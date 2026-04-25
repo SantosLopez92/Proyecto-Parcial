@@ -153,33 +153,30 @@ void app_main(void)
         
         if(gpio_get_level(BTN_R)==0){
 			
-        	if(r>80){
-				if(g>80 && b>80){
-					sprintf(lineChar, "Blanco");
-					} 
-				if(g>60 && g<=80 && b>20 && b<=40){
-					sprintf(lineChar, "Amarillo");
-					}
-				if(g>20 && g<=40 && b>20 && b<=40){
-					sprintf(lineChar, "Rojo");
-					}
-				}
-			
-        	if(r>50 && r<=70 && g>80 && b>20 && b<=40){
+        	if(r>80 && g>80 && b>80){
+				sprintf(lineChar, "Blanco");
+			} 
+			else if(r>80 && g>60 && g<=80 && b>20 && b<=40){
+				sprintf(lineChar, "Amarillo");
+			}
+			else if(r>80 && g>20 && g<=40 && b>20 && b<=40){
+				sprintf(lineChar, "Rojo");
+			}
+			else if(r>50 && r<=70 && g>80 && b>20 && b<=40){
 				sprintf(lineChar, "Verde");
-				}
-			
-        	if(r>40 && r<=60 && g>80 && b>80){
+			}
+        	else if(r>40 && r<=60 && g>80 && b>80){
 				sprintf(lineChar, "Cian");
-				}
-			
-        	if(r>20 && r<=40 && g>20 && g<=40 && b>60 && b<=80){
+			}
+        	else if(r>20 && r<=40 && g>20 && g<=40 && b>60 && b<=80){
 				sprintf(lineChar, "Azul");
-				}
-			
-        	if(r<20 && g<20 && b<20){
+			}
+        	else if(r<20 && g<20 && b<20){
 				sprintf(lineChar, "Negro");
-				}
+			}
+			else{
+				sprintf(lineChar, "Desconocido");
+			}		
 		}  
     }
 } 
