@@ -36,7 +36,7 @@ int led_usado=0;
 
 
 
-//Inicializaci髇 BTN
+//Inicializaci贸n BTN
 void in_btn(){
     gpio_reset_pin(BTN_S);
     gpio_set_direction(BTN_S,GPIO_MODE_INPUT);
@@ -48,14 +48,14 @@ void in_btn(){
 }
 
 
-//Inicializaci髇 Adc
+//Inicializaci贸n Adc
 void in_adc(){
 	
 	adc1_config_width(ADC_WIDTH);
     adc1_config_channel_atten(ADC_CHANNEL, ADC_ATTEN);
 }
 
-//Inicializaci髇 Leds
+//Inicializaci贸n Leds
 void in_leds(){
 
     gpio_reset_pin(LED_R);
@@ -129,4 +129,4 @@ void app_main(void)
 		ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
         vTaskDelay(pdMS_TO_TICKS(500));
     }
-}
+} prueba edici贸n
