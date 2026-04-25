@@ -1,4 +1,4 @@
-#include <stdio.h>
+	#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
@@ -75,21 +75,14 @@ void in_leds(){
 
 }
 
-//Cambio de led prendido
-void control_leds(){
+
+
+void borrado_leds(){
+
 	gpio_set_level(LED_R, 0); 
 	gpio_set_level(LED_G, 0); 
 	gpio_set_level(LED_B, 0); 
 	
-	if(led_usado==0){
-	gpio_set_level(LED_R, 1);
-	}
-	if(led_usado==1){
-	gpio_set_level(LED_G, 1); 
-	}
-	if(led_usado==2){
-	gpio_set_level(LED_B, 1); 
-	}
 }
 
 void app_main(void)
@@ -118,12 +111,24 @@ void app_main(void)
 			if (led_usado>2){
 				led_usado=0;
 			}
-			control_leds();
-			vTaskDelay(pdMS_TO_TICKS(300));
+
+			borrado_leds();
+
 		}
 		
 		// Mostrar resultados
-		sprintf(lineChar, "Salida : %.d ", raw);
+		if(led_usado==0){
+			gpio_set_level(LED_R, 1);
+			sprintf(lineChar, "Rojo : %.d ", raw);
+		}
+		if(led_usado==1){
+			gpio_set_level(LED_G, 1); 
+			sprintf(lineChar, "Verde : %.d ", raw);
+		}
+		if(led_usado==2){
+			gpio_set_level(LED_B, 1); 
+			sprintf(lineChar, "Azul : %.d ", raw);
+		}
 		ssd1306_clear_screen(&dev, false);
 		ssd1306_contrast(&dev, 0xff);
 		ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
