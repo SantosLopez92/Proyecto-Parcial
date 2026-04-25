@@ -75,8 +75,7 @@ void in_leds(){
 
 }
 
-
-
+//Cambio de led prendido
 void borrado_leds(){
 
 	gpio_set_level(LED_R, 0); 
@@ -100,38 +99,62 @@ void app_main(void)
 	in_adc();
 	in_btn();
 	
+	//Valores máximos de Rojo, Verde y Azul
+	int RM=1240;
+	int GM=1000;
+	int BM=1195;
+	
 	
     // Bucle de trabajo
     while (1) {
         int raw = adc1_get_raw(ADC_CHANNEL);
+        float r=0;
+        float g=0;
+        float b=0;
 		
 		if(gpio_get_level(BTN_S)==0){
-			
 			led_usado++;
-			if (led_usado>2){
+			if (led_usado>3){
 				led_usado=0;
 			}
 
 			borrado_leds();
-
+			vTaskDelay(pdMS_TO_TICKS(300));
 		}
+		
 		
 		// Mostrar resultados
 		if(led_usado==0){
 			gpio_set_level(LED_R, 1);
-			sprintf(lineChar, "Rojo : %.d ", raw);
+			r=((float)raw/RM)*100;
+			sprintf(lineChar, "Rojo : %.f ", r);
+			
 		}
 		if(led_usado==1){
 			gpio_set_level(LED_G, 1); 
-			sprintf(lineChar, "Verde : %.d ", raw);
+			g=((float)raw/GM)*100;
+			sprintf(lineChar, "Verde : %.f ", g);
 		}
 		if(led_usado==2){
 			gpio_set_level(LED_B, 1); 
-			sprintf(lineChar, "Azul : %.d ", raw);
+			b=((float)raw/BM)*100;
+			sprintf(lineChar, "Azul : %.f ", b);			
+		}
+		if(led_usado==3){
+			gpio_set_level(LED_B, 1); 
+			sprintf(lineChar, "---Listo---");
 		}
 		ssd1306_clear_screen(&dev, false);
 		ssd1306_contrast(&dev, 0xff);
 		ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
         vTaskDelay(pdMS_TO_TICKS(500));
+        
+        
+        
+        if(gpio_get_level(BTN_R)==0){
+        	
+        	
+		}  
+        
     }
 } 
