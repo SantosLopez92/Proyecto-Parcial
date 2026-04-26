@@ -222,6 +222,8 @@ void automatico(){
 			}
 			r = ((float)(mediciones/5.0)/RM)*100;
 			
+			
+			
 			// Led verde encendido
 			borrado_leds();
 			gpio_set_level(LED_G, 1);
@@ -236,7 +238,7 @@ void automatico(){
 			for(int i=0; i<5; i++){
 				raw = adc1_get_raw(ADC_CHANNEL);
 				mediciones += raw;
-				float valor = ((float)raw/RM)*100;
+				float valor = ((float)raw/GM)*100;
 
 				ssd1306_clear_screen(&dev, false);
 				ssd1306_contrast(&dev, 0xff);
@@ -246,6 +248,9 @@ void automatico(){
 				vTaskDelay(pdMS_TO_TICKS(1000));
 			}
 			g = ((float)(mediciones/5.0)/GM)*100;
+			
+			
+			
 			
 			// Led azul encendido
 			borrado_leds();
@@ -261,7 +266,7 @@ void automatico(){
 			for(int i=0; i<5; i++){
 				raw = adc1_get_raw(ADC_CHANNEL);
 				mediciones += raw;
-				float valor = ((float)raw/RM)*100;
+				float valor = ((float)raw/BM)*100;
 
 				ssd1306_clear_screen(&dev, false);
 				ssd1306_contrast(&dev, 0xff);
