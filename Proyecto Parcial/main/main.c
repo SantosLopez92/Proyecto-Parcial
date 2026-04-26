@@ -104,13 +104,13 @@ void app_main(void)
 	int GM=1000;
 	int BM=1195;
 	
-	
+	float r=0;
+    float g=0;
+    float b=0;
     // Bucle de trabajo
     while (1) {
         int raw = adc1_get_raw(ADC_CHANNEL);
-        float r=0;
-        float g=0;
-        float b=0;
+        
 		
 		if(gpio_get_level(BTN_S)==0){
 			led_usado++;
@@ -159,24 +159,31 @@ void app_main(void)
 			else if(r>80 && g>60 && g<=80 && b>20 && b<=40){
 				sprintf(lineChar, "Amarillo");
 			}
-			else if(r>80 && g>20 && g<=40 && b>20 && b<=40){
+			else if(r>80 && g>20 && g<=40 && b<=40){
 				sprintf(lineChar, "Rojo");
 			}
-			else if(r>50 && r<=70 && g>80 && b>20 && b<=40){
+			else if(r>50 && r<=70 && g>70 && b>20 && b<=40){
 				sprintf(lineChar, "Verde");
 			}
         	else if(r>40 && r<=60 && g>80 && b>80){
 				sprintf(lineChar, "Cian");
 			}
-        	else if(r>20 && r<=40 && g>20 && g<=40 && b>60 && b<=80){
+        	else if(r>20 && r<=40 && g>20 && g<=40 && b>50 && b<=80){
 				sprintf(lineChar, "Azul");
 			}
         	else if(r<20 && g<20 && b<20){
 				sprintf(lineChar, "Negro");
 			}
+			/*else if(r>30 && r<50 && g>20 && g<=40 && b>40 && b<=60){
+				sprintf(lineChar, "Morado");
+			}*/
 			else{
 				sprintf(lineChar, "Desconocido");
-			}		
+			}	
+			ssd1306_clear_screen(&dev, false);
+			ssd1306_contrast(&dev, 0xff);
+			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+        	vTaskDelay(pdMS_TO_TICKS(500));	
 		}  
     }
 } 
