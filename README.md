@@ -65,12 +65,19 @@ Desarrollar un sistema embebido capaz de detectar colores mediante iluminación 
 
 ## 📸 Imágenes
 
-Montaje del circuito
-
+### Circuito
 ![Circuito](imagenes/Circuito.png)
-![Recubrimiento de LED´s](imagenes/recubrimiento.jpeg)
+
+### Recubrimiento de LED´s
+![Recubrimiento de LED´s](imagenes/Recubrimiento.jpeg)
+
+### Circuito físico armado
 ![Circuito físico](imagenes/CircuitoArmado.jpeg)
-![Tubo para la fotorresistencia](imagenes/Cilindro.jpeg)
+
+### Tubo para la fotorresistencia
+![Tubo para la fotorresistencia](imagenes/Cilidro.jpeg)
+
+### Estructura externa
 ![Estructura externa](imagenes/CircuitoCompleto.jpeg)
 
 ---
@@ -99,23 +106,24 @@ ProyectoParcial/
 
 ## 🔄 Historial
 
--Inicio proyecto
--Configuración inicial ADC y OLED
--Configuración periféricos
--Reasignación LED´s
--Prueba edición
--Prueba edición
--Resultados individuales de cada LED´s en OLED
--Conversión en porcentaje de los resultados
--Botón 2: Detección de colores
--Correción de detección de colores
--Calibración de valores en colores
--Botón 3: Detección de color automática
--Configuración de OLED en detección de color automática
--Reorganización del código y reasignación de botones
--Corrección de detección automática y ajuste de OLED
--Creación de README
--Mejora de interfaz
+- Inicio proyecto
+- Configuración inicial ADC y OLED
+- Configuración periféricos
+- Reasignación LED´s
+- Prueba edición
+- Prueba edición
+- Resultados individuales de cada LED´s en OLED
+- Conversión en porcentaje de los resultados
+- Botón 2: Detección de colores
+- Correción de detección de colores
+- Calibración de valores en colores
+- Botón 3: Detección de color automática
+- Configuración de OLED en detección de color automática
+- Reorganización del código y reasignación de botones
+- Corrección de detección automática y ajuste de OLED
+- Creación de README
+- Correción de README
+- Mejora de interfaz
 
 ---
 
@@ -128,5 +136,5 @@ ProyectoParcial/
 
 ## 📚 Autores
 
-Areli Montelongo Prado
-Santos Azael López Meza
+- Areli Montelongo Prado
+- Santos Azael López Meza
