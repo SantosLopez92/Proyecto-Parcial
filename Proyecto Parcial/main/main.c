@@ -28,14 +28,23 @@
 #define LED_B 				GPIO_NUM_5  //Led Azul
 
 //Configuracion botones
-#define BTN_S 				GPIO_NUM_13//Boton siguiente Led
-#define BTN_R 				GPIO_NUM_14//Boton resultado
-#define BTN_A 				GPIO_NUM_27//Botón detección automática
+#define BTN_S 				GPIO_NUM_13//Boton seleccion de modo
+#define BTN_R 				GPIO_NUM_14//Boton cambio de led/inicio de proceso autom�tico
+#define BTN_A 				GPIO_NUM_27//Boton resultado de color
 
 int led_usado=0;
+int center=3;
+char lineChar[20];
+SSD1306_t dev;
 
-
-
+//Valores máximos de Rojo, Verde y Azul
+int RM=1240;
+int GM=1000;
+int BM=1195;
+	
+float r=0;
+float g=0;
+float b=0;
 
 //InicializaciÃ³n BTN
 void in_btn(){
@@ -89,35 +98,16 @@ void borrado_leds(){
 	
 }
 
-void app_main(void)
-{
-	//Ajuste Oled
-	int center;
-	char lineChar[20];	
-	SSD1306_t dev;
-	i2c_master_init(&dev, CONFIG_SDA_GPIO, CONFIG_SCL_GPIO, CONFIG_RESET_GPIO);
-	ssd1306_init(&dev, 128, 64);
-	center = 3;
+void manual(){
+			
+
+	led_usado=0;
 	
-	//Inicializacion de leds, adc y btns
-	in_leds();
-	in_adc();
-	in_btn();
+	vTaskDelay(pdMS_TO_TICKS(300));
 	
-	//Valores máximos de Rojo, Verde y Azul
-	int RM=1240;
-	int GM=1000;
-	int BM=1195;
-	
-	float r=0;
-    float g=0;
-    float b=0;
-    // Bucle de trabajo
-    while (1) {
-        int raw = adc1_get_raw(ADC_CHANNEL);
-        
-		
-		if(gpio_get_level(BTN_S)==0){
+	while (gpio_get_level(BTN_S)==1){
+		int raw = adc1_get_raw(ADC_CHANNEL);
+		if(gpio_get_level(BTN_R)==0){
 			led_usado++;
 			if (led_usado>3){
 				led_usado=0;
@@ -128,12 +118,12 @@ void app_main(void)
 		}
 		
 		
-		// Mostrar resultados
+		
 		if(led_usado==0){
+			borrado_leds();
 			gpio_set_level(LED_R, 1);
 			r=((float)raw/RM)*100;
-			sprintf(lineChar, "Rojo : %.f ", r);
-			
+			sprintf(lineChar, "Rojo : %.f ", r);	
 		}
 		if(led_usado==1){
 			gpio_set_level(LED_G, 1); 
@@ -146,7 +136,6 @@ void app_main(void)
 			sprintf(lineChar, "Azul : %.f ", b);			
 		}
 		if(led_usado==3){
-			gpio_set_level(LED_B, 1); 
 			sprintf(lineChar, "---Listo---");
 		}
 		ssd1306_clear_screen(&dev, false);
@@ -156,7 +145,7 @@ void app_main(void)
         
         
         
-        if(gpio_get_level(BTN_R)==0){
+        if(gpio_get_level(BTN_A)==0){
 			
         	if(r>80 && g>80 && b>80){
 				sprintf(lineChar, "Blanco");
@@ -190,9 +179,21 @@ void app_main(void)
 			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
         	vTaskDelay(pdMS_TO_TICKS(500));	
 		}
+		}
+	return;
+	}
 		
-		if(gpio_get_level(BTN_A)==0){
+		
+		
+		
+		
+		
+		
+void automatico(){
+	int raw = adc1_get_raw(ADC_CHANNEL);
 
+	vTaskDelay(pdMS_TO_TICKS(300));
+	
 			// Capturar valores y calcular el promedio
 
 			// Led rojo encendido
@@ -207,10 +208,10 @@ void app_main(void)
 			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilización de valores
 			int mediciones = 0;
 			for(int i=0; i<5; i++){
-				mediciones += adc1_get_raw(ADC_CHANNEL);
+				mediciones += raw;
 				vTaskDelay(pdMS_TO_TICKS(1000));
 			}
-			r = ((mediciones/5)/RM)*100;
+			r = ((float)(mediciones/5)/RM)*100;
 			
 			// Led verde encendido
 			borrado_leds();
@@ -224,10 +225,10 @@ void app_main(void)
 			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilización de valores
 			mediciones = 0;
 			for(int i=0; i<5; i++){
-				mediciones += adc1_get_raw(ADC_CHANNEL);
+				mediciones += raw;
 				vTaskDelay(pdMS_TO_TICKS(1000));
 			}
-			g = ((mediciones/5)/GM)*100;
+			g = ((float)(mediciones/5)/GM)*100;
 			
 			// Led azul encendido
 			borrado_leds();
@@ -241,19 +242,12 @@ void app_main(void)
 			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilización de valores
 			mediciones = 0;
 			for(int i=0; i<5; i++){
-				mediciones += adc1_get_raw(ADC_CHANNEL);
+				mediciones += raw;
 				vTaskDelay(pdMS_TO_TICKS(1000));
 			}
-			b = ((mediciones/5)/BM)*100;
+			b = ((float)(mediciones/5)/BM)*100;
 			borrado_leds();
 
-			ssd1306_clear_screen(&dev, false);
-			ssd1306_contrast(&dev, 0xff);
-			sprintf(lineChar, "Rojo: %.f ", r);
-			sprintf(lineChar, "Verde: %.f ", g);
-			sprintf(lineChar, "Azul: %.f ", b);
-			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
-			vTaskDelay(pdMS_TO_TICKS(2000));
 			
 			// Resultados
         	if(r>80 && g>80 && b>80){
@@ -287,6 +281,59 @@ void app_main(void)
 			ssd1306_contrast(&dev, 0xff);
 			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
         	vTaskDelay(pdMS_TO_TICKS(500));	
+        	while (gpio_get_level(BTN_S)==1){
+        		vTaskDelay(pdMS_TO_TICKS(200));	
+				}
+			return;
 		}
+
+void app_main(void)
+{
+	//cConfiguracion OLED
+
+	i2c_master_init(&dev, CONFIG_SDA_GPIO, CONFIG_SCL_GPIO, CONFIG_RESET_GPIO);
+	ssd1306_init(&dev, 128, 64);
+	vTaskDelay(pdMS_TO_TICKS(300));
+	
+	//Inicializacion de leds, adc y btns
+	in_leds();
+	in_adc();
+	in_btn();
+
+    
+    //Reinicio de variable
+    borrado_leds();
+    int seleccion=0;
+    // Bucle de trabajo
+    while (1) {
+        if(gpio_get_level(BTN_S)==0){
+			seleccion++;
+			if (seleccion>1){
+				seleccion=0;
+			}
+
+			vTaskDelay(pdMS_TO_TICKS(300));
+		}
+        
+		if(seleccion==0){
+			sprintf(lineChar, "Automatico");
+		}
+		if(seleccion==1){
+			sprintf(lineChar, "Manual");
+		}
+		ssd1306_clear_screen(&dev, false);
+			ssd1306_contrast(&dev, 0xff);
+			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+        	vTaskDelay(pdMS_TO_TICKS(100));	
+		
+		 if(gpio_get_level(BTN_R)==0 && seleccion==0){
+		 	automatico();
+		 }
+		 if(gpio_get_level(BTN_R)==0 && seleccion==1){
+		 	manual();
+		 }
+
+		
+		
     }
 } 
