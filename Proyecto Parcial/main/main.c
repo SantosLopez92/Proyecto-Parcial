@@ -46,6 +46,10 @@ void in_btn(){
     gpio_reset_pin(BTN_R);
     gpio_set_direction(BTN_R,GPIO_MODE_INPUT);
     gpio_set_pull_mode(BTN_R,GPIO_PULLUP_ONLY);
+
+    gpio_reset_pin(BTN_A);
+    gpio_set_direction(BTN_A,GPIO_MODE_INPUT);
+    gpio_set_pull_mode(BTN_A,GPIO_PULLUP_ONLY);
 }
 
 
@@ -194,8 +198,14 @@ void app_main(void)
 			// Led rojo encendido
 			borrado_leds();
 			gpio_set_level(LED_R, 1);
+
+			ssd1306_clear_screen(&dev, false);
+			ssd1306_contrast(&dev, 0xff);
+			sprintf(lineChar, "Rojo: Midiendo...");
+			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+			
 			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilización de valores
-			mediciones = 0;
+			int mediciones = 0;
 			for(int i=0; i<5; i++){
 				mediciones += adc1_get_raw(ADC_CHANNEL);
 				vTaskDelay(pdMS_TO_TICKS(1000));
@@ -205,26 +215,46 @@ void app_main(void)
 			// Led verde encendido
 			borrado_leds();
 			gpio_set_level(LED_G, 1);
+
+			ssd1306_clear_screen(&dev, false);
+			ssd1306_contrast(&dev, 0xff);
+			sprintf(lineChar, "Verde: Midiendo...");
+			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+			
 			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilización de valores
 			mediciones = 0;
 			for(int i=0; i<5; i++){
 				mediciones += adc1_get_raw(ADC_CHANNEL);
 				vTaskDelay(pdMS_TO_TICKS(1000));
 			}
-			g = ((mediciones/5)/RM)*100;
+			g = ((mediciones/5)/GM)*100;
 			
 			// Led azul encendido
 			borrado_leds();
 			gpio_set_level(LED_B, 1);
+
+			ssd1306_clear_screen(&dev, false);
+			ssd1306_contrast(&dev, 0xff);
+			sprintf(lineChar, "Azul: Midiendo...");
+			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+			
 			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilización de valores
 			mediciones = 0;
 			for(int i=0; i<5; i++){
 				mediciones += adc1_get_raw(ADC_CHANNEL);
 				vTaskDelay(pdMS_TO_TICKS(1000));
 			}
-			b = ((mediciones/5)/RM)*100;
+			b = ((mediciones/5)/BM)*100;
 			borrado_leds();
 
+			ssd1306_clear_screen(&dev, false);
+			ssd1306_contrast(&dev, 0xff);
+			sprintf(lineChar, "Rojo: %.f ", r);
+			sprintf(lineChar, "Verde: %.f ", g);
+			sprintf(lineChar, "Azul: %.f ", b);
+			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+			vTaskDelay(pdMS_TO_TICKS(2000));
+			
 			// Resultados
         	if(r>80 && g>80 && b>80){
 				sprintf(lineChar, "Blanco");
