@@ -29,7 +29,7 @@
 
 //Configuracion botones
 #define BTN_S 				GPIO_NUM_13//Boton seleccion de modo
-#define BTN_R 				GPIO_NUM_14//Boton cambio de led/inicio de proceso autom�tico
+#define BTN_R 				GPIO_NUM_14//Boton cambio de led/inicio de proceso automático
 #define BTN_A 				GPIO_NUM_27//Boton resultado de color
 
 int led_usado=0;
@@ -37,7 +37,7 @@ int center=3;
 char lineChar[20];
 SSD1306_t dev;
 
-//Valores máximos de Rojo, Verde y Azul
+//Valores mÃ¡ximos de Rojo, Verde y Azul
 int RM=1240;
 int GM=1000;
 int BM=1195;
@@ -46,7 +46,7 @@ float r=0;
 float g=0;
 float b=0;
 
-//InicializaciÃ³n BTN
+//InicializaciÃƒÂ³n BTN
 void in_btn(){
     gpio_reset_pin(BTN_S);
     gpio_set_direction(BTN_S,GPIO_MODE_INPUT);
@@ -62,14 +62,14 @@ void in_btn(){
 }
 
 
-//InicializaciÃ³n Adc
+//InicializaciÃƒÂ³n Adc
 void in_adc(){
 	
 	adc1_config_width(ADC_WIDTH);
     adc1_config_channel_atten(ADC_CHANNEL, ADC_ATTEN);
 }
 
-//InicializaciÃ³n Leds
+//InicializaciÃƒÂ³n Leds
 void in_leds(){
 
     gpio_reset_pin(LED_R);
@@ -190,9 +190,10 @@ void manual(){
 		
 		
 void automatico(){
-	int raw = adc1_get_raw(ADC_CHANNEL);
-
-	vTaskDelay(pdMS_TO_TICKS(300));
+			int raw;
+			int mediciones;
+	
+			vTaskDelay(pdMS_TO_TICKS(300));
 	
 			// Capturar valores y calcular el promedio
 
@@ -202,16 +203,24 @@ void automatico(){
 
 			ssd1306_clear_screen(&dev, false);
 			ssd1306_contrast(&dev, 0xff);
-			sprintf(lineChar, "Rojo: Midiendo...");
+			sprintf(lineChar, "Estabilizando");
 			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilizaciÃ³n de valores
 			
-			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilización de valores
-			int mediciones = 0;
+			mediciones = 0;
 			for(int i=0; i<5; i++){
+				raw = adc1_get_raw(ADC_CHANNEL);
 				mediciones += raw;
+				float valor = ((float)raw/RM)*100;
+
+				ssd1306_clear_screen(&dev, false);
+				ssd1306_contrast(&dev, 0xff);
+				sprintf(lineChar, "Rojo: %.0f", valor);
+				ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+				
 				vTaskDelay(pdMS_TO_TICKS(1000));
 			}
-			r = ((float)(mediciones/5)/RM)*100;
+			r = ((float)(mediciones/5.0)/RM)*100;
 			
 			// Led verde encendido
 			borrado_leds();
@@ -219,16 +228,24 @@ void automatico(){
 
 			ssd1306_clear_screen(&dev, false);
 			ssd1306_contrast(&dev, 0xff);
-			sprintf(lineChar, "Verde: Midiendo...");
+			sprintf(lineChar, "Estabilizando");
 			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilizaciÃ³n de valores
 			
-			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilización de valores
 			mediciones = 0;
 			for(int i=0; i<5; i++){
+				raw = adc1_get_raw(ADC_CHANNEL);
 				mediciones += raw;
+				float valor = ((float)raw/RM)*100;
+
+				ssd1306_clear_screen(&dev, false);
+				ssd1306_contrast(&dev, 0xff);
+				sprintf(lineChar, "Verde: %.0f", valor);
+				ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+				
 				vTaskDelay(pdMS_TO_TICKS(1000));
 			}
-			g = ((float)(mediciones/5)/GM)*100;
+			g = ((float)(mediciones/5.0)/GM)*100;
 			
 			// Led azul encendido
 			borrado_leds();
@@ -236,19 +253,26 @@ void automatico(){
 
 			ssd1306_clear_screen(&dev, false);
 			ssd1306_contrast(&dev, 0xff);
-			sprintf(lineChar, "Azul: Midiendo...");
+			sprintf(lineChar, "Estabilizando");
 			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilizaciÃ³n de valores
 			
-			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilización de valores
 			mediciones = 0;
 			for(int i=0; i<5; i++){
+				raw = adc1_get_raw(ADC_CHANNEL);
 				mediciones += raw;
+				float valor = ((float)raw/RM)*100;
+
+				ssd1306_clear_screen(&dev, false);
+				ssd1306_contrast(&dev, 0xff);
+				sprintf(lineChar, "Azul: %.0f", valor);
+				ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+				
 				vTaskDelay(pdMS_TO_TICKS(1000));
 			}
-			b = ((float)(mediciones/5)/BM)*100;
+			b = ((float)(mediciones/5.0)/BM)*100;
 			borrado_leds();
 
-			
 			// Resultados
         	if(r>80 && g>80 && b>80){
 				sprintf(lineChar, "Blanco");
@@ -333,7 +357,5 @@ void app_main(void)
 		 	manual();
 		 }
 
-		
-		
     }
 } 
