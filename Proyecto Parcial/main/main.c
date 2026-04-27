@@ -144,180 +144,205 @@ void manual(){
         vTaskDelay(pdMS_TO_TICKS(500));
         
         
-        
-        if(gpio_get_level(BTN_A)==0){
+		if(gpio_get_level(BTN_A)==0){
 			
-        	if(r>80 && g>80 && b>80){
-				sprintf(lineChar, "Blanco");
-			} 
-			else if(r>80 && g>60 && g<=80 && b>20 && b<=40){
-				sprintf(lineChar, "Amarillo");
+        	// Normalizacion por suma
+        	float total = r+g+b;
+
+			// Evitar división entre 0
+			if(total<1) total = 1;
+			float intensidad = (r+g+b)/3;
+
+			if(intensidad<10){
+    			sprintf(lineChar, "Negro");
 			}
-			else if(r>80 && g>20 && g<=40 && b<=40){
-				sprintf(lineChar, "Rojo");
+			float rn = (r/total)*100;
+			float gn = (g/total)*100;
+			float bn = (b/total)*100;
+			
+			if(intensidad<10){
+   				sprintf(lineChar, "Negro");
 			}
-			else if(r>50 && r<=70 && g>70 && b>20 && b<=40){
-				sprintf(lineChar, "Verde");
+			else if(rn>30 && gn>30 && bn>30){
+    			sprintf(lineChar, "Blanco");
 			}
-        	else if(r>40 && r<=60 && g>80 && b>80){
-				sprintf(lineChar, "Cian");
+			else if(rn>35 && gn>35){
+    			sprintf(lineChar, "Amarillo");
 			}
-        	else if(r>20 && r<=40 && g>20 && g<=40 && b>50 && b<=80){
-				sprintf(lineChar, "Azul");
+			else if(rn>30 && bn>35){
+    			sprintf(lineChar, "Magenta");
 			}
-        	else if(r<20 && g<20 && b<20){
-				sprintf(lineChar, "Negro");
+			else if(gn>35 && bn>35){
+    			sprintf(lineChar, "Cian");
 			}
-			/*else if(r>30 && r<50 && g>20 && g<=40 && b>40 && b<=60){
-				sprintf(lineChar, "Morado");
-			}*/
+			else if(rn>gn && rn>bn){
+    			sprintf(lineChar, "Rojo");
+			}
+			else if(gn>rn && gn>bn){
+    			sprintf(lineChar, "Verde");
+			}
+			else if(bn>rn && bn>gn){
+    			sprintf(lineChar, "Azul");
+			}
+				
 			else{
-				sprintf(lineChar, "Desconocido");
-			}	
+    			sprintf(lineChar, "Desconocido");
+			}
 			ssd1306_clear_screen(&dev, false);
 			ssd1306_contrast(&dev, 0xff);
 			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
         	vTaskDelay(pdMS_TO_TICKS(500));	
+			}
 		}
-		}
-	return;
+	
+		return;
 	}
 		
 		
 		
 		
-		
-		
-		
 void automatico(){
-			int raw;
-			int mediciones;
+
+	int raw;
+	int mediciones;
 	
-			vTaskDelay(pdMS_TO_TICKS(300));
+	vTaskDelay(pdMS_TO_TICKS(300));
 	
-			// Capturar valores y calcular el promedio
+	// Capturar valores y calcular el promedio
 
-			// Led rojo encendido
-			borrado_leds();
-			gpio_set_level(LED_R, 1);
+	// Led rojo encendido
+	borrado_leds();
+	gpio_set_level(LED_R, 1);
 
-			ssd1306_clear_screen(&dev, false);
-			ssd1306_contrast(&dev, 0xff);
-			sprintf(lineChar, "Estabilizando");
-			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
-			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilizaciÃ³n de valores
+	ssd1306_clear_screen(&dev, false);
+	ssd1306_contrast(&dev, 0xff);
+	sprintf(lineChar, "Estabilizando");
+	ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+	vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilizaciÃ³n de valores
 			
-			mediciones = 0;
-			for(int i=0; i<5; i++){
-				raw = adc1_get_raw(ADC_CHANNEL);
-				mediciones += raw;
-				float valor = ((float)raw/RM)*100;
+	mediciones = 0;
+	for(int i=0; i<5; i++){
+		raw = adc1_get_raw(ADC_CHANNEL);
+		mediciones += raw;
+		float valor = ((float)raw/RM)*100;
 
-				ssd1306_clear_screen(&dev, false);
-				ssd1306_contrast(&dev, 0xff);
-				sprintf(lineChar, "Rojo: %.0f", valor);
-				ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+		ssd1306_clear_screen(&dev, false);
+		ssd1306_contrast(&dev, 0xff);
+		sprintf(lineChar, "Rojo: %.0f", valor);
+		ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
 				
-				vTaskDelay(pdMS_TO_TICKS(1000));
-			}
-			r = ((float)(mediciones/5.0)/RM)*100;
+		vTaskDelay(pdMS_TO_TICKS(1000));
+	}
+	r = ((float)(mediciones/5.0)/RM)*100;
 			
-			
-			
-			// Led verde encendido
-			borrado_leds();
-			gpio_set_level(LED_G, 1);
+						
+	// Led verde encendido
+	borrado_leds();
+	gpio_set_level(LED_G, 1);
 
-			ssd1306_clear_screen(&dev, false);
-			ssd1306_contrast(&dev, 0xff);
-			sprintf(lineChar, "Estabilizando");
-			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
-			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilizaciÃ³n de valores
+	ssd1306_clear_screen(&dev, false);
+	ssd1306_contrast(&dev, 0xff);
+	sprintf(lineChar, "Estabilizando");
+	ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+	vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilizaciÃ³n de valores
 			
-			mediciones = 0;
-			for(int i=0; i<5; i++){
-				raw = adc1_get_raw(ADC_CHANNEL);
-				mediciones += raw;
-				float valor = ((float)raw/GM)*100;
+	mediciones = 0;
+	for(int i=0; i<5; i++){
+		raw = adc1_get_raw(ADC_CHANNEL);
+		mediciones += raw;
+		float valor = ((float)raw/GM)*100;
 
-				ssd1306_clear_screen(&dev, false);
-				ssd1306_contrast(&dev, 0xff);
-				sprintf(lineChar, "Verde: %.0f", valor);
-				ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+		ssd1306_clear_screen(&dev, false);
+		ssd1306_contrast(&dev, 0xff);
+		sprintf(lineChar, "Verde: %.0f", valor);
+		ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
 				
-				vTaskDelay(pdMS_TO_TICKS(1000));
-			}
-			g = ((float)(mediciones/5.0)/GM)*100;
+		vTaskDelay(pdMS_TO_TICKS(1000));
+	}
+	g = ((float)(mediciones/5.0)/GM)*100;
 			
-			
-			
-			
-			// Led azul encendido
-			borrado_leds();
-			gpio_set_level(LED_B, 1);
 
-			ssd1306_clear_screen(&dev, false);
-			ssd1306_contrast(&dev, 0xff);
-			sprintf(lineChar, "Estabilizando");
-			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
-			vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilizaciÃ³n de valores
-			
-			mediciones = 0;
-			for(int i=0; i<5; i++){
-				raw = adc1_get_raw(ADC_CHANNEL);
-				mediciones += raw;
-				float valor = ((float)raw/BM)*100;
+	// Led azul encendido
+	borrado_leds();
+	gpio_set_level(LED_B, 1);
 
-				ssd1306_clear_screen(&dev, false);
-				ssd1306_contrast(&dev, 0xff);
-				sprintf(lineChar, "Azul: %.0f", valor);
-				ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+	ssd1306_clear_screen(&dev, false);
+	ssd1306_contrast(&dev, 0xff);
+	sprintf(lineChar, "Estabilizando");
+	ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+	vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilizaciÃ³n de valores
+			
+	mediciones = 0;
+	for(int i=0; i<5; i++){
+		raw = adc1_get_raw(ADC_CHANNEL);
+		mediciones += raw;
+		float valor = ((float)raw/BM)*100;
+
+		ssd1306_clear_screen(&dev, false);
+		ssd1306_contrast(&dev, 0xff);
+		sprintf(lineChar, "Azul: %.0f", valor);
+		ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
 				
-				vTaskDelay(pdMS_TO_TICKS(1000));
-			}
-			b = ((float)(mediciones/5.0)/BM)*100;
-			borrado_leds();
+		vTaskDelay(pdMS_TO_TICKS(1000));
+	}
+	b = ((float)(mediciones/5.0)/BM)*100;
+	borrado_leds();
 
-			// Resultados
-        	if(r>80 && g>80 && b>80){
-				sprintf(lineChar, "Blanco");
-			} 
-			else if(r>80 && g>60 && g<=80 && b>20 && b<=40){
-				sprintf(lineChar, "Amarillo");
-			}
-			else if(r>80 && g>20 && g<=40 && b<=40){
-				sprintf(lineChar, "Rojo");
-			}
-			else if(r>50 && r<=70 && g>70 && b>20 && b<=40){
-				sprintf(lineChar, "Verde");
-			}
-        	else if(r>40 && r<=60 && g>80 && b>80){
-				sprintf(lineChar, "Cian");
-			}
-        	else if(r>20 && r<=40 && g>20 && g<=40 && b>50 && b<=80){
-				sprintf(lineChar, "Azul");
-			}
-        	else if(r<20 && g<20 && b<20){
-				sprintf(lineChar, "Negro");
-			}
-			/*else if(r>30 && r<50 && g>20 && g<=40 && b>40 && b<=60){
-				sprintf(lineChar, "Morado");
-			}*/
-			else{
-				sprintf(lineChar, "Desconocido");
-			}	
-			ssd1306_clear_screen(&dev, false);
-			ssd1306_contrast(&dev, 0xff);
-			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
-        	vTaskDelay(pdMS_TO_TICKS(500));	
-        	while (gpio_get_level(BTN_S)==1){
-        		vTaskDelay(pdMS_TO_TICKS(200));	
-				}
-			return;
-		}
+	
+    // Normalizacion por suma
+    float total = r+g+b;
 
-void app_main(void)
-{
+	// Evitar división entre 0
+	if(total<1) total = 1;
+	float intensidad = (r+g+b)/3;
+
+	if(intensidad<10){
+    	sprintf(lineChar, "Negro");
+	}
+	float rn = (r/total)*100;
+	float gn = (g/total)*100;
+	float bn = (b/total)*100;
+			
+	if(intensidad<10){
+   		sprintf(lineChar, "Negro");
+	}
+	else if(rn>30 && gn>30 && bn>30){
+    	sprintf(lineChar, "Blanco");
+	}
+	else if(rn>35 && gn>35){
+    	sprintf(lineChar, "Amarillo");
+	}
+	else if(rn>30 && bn>35){
+    	sprintf(lineChar, "Magenta");
+	}
+	else if(gn>35 && bn>35){
+    	sprintf(lineChar, "Cian");
+	}
+	else if(rn>gn && rn>bn){
+    	sprintf(lineChar, "Rojo");
+	}
+	else if(gn>rn && gn>bn){
+    	sprintf(lineChar, "Verde");
+	}
+	else if(bn>rn && bn>gn){
+    	sprintf(lineChar, "Azul");
+	}	
+	else{
+    	sprintf(lineChar, "Desconocido");
+	}
+	ssd1306_clear_screen(&dev, false);
+	ssd1306_contrast(&dev, 0xff);
+	ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+    vTaskDelay(pdMS_TO_TICKS(500));	
+
+	while (gpio_get_level(BTN_S)==1){
+        vTaskDelay(pdMS_TO_TICKS(200));	
+	}
+	
+	return;
+}
+
+void app_main(void){
 	//cConfiguracion OLED
 
 	i2c_master_init(&dev, CONFIG_SDA_GPIO, CONFIG_SCL_GPIO, CONFIG_RESET_GPIO);
@@ -361,6 +386,5 @@ void app_main(void)
 		 if(gpio_get_level(BTN_R)==0 && seleccion==1){
 		 	manual();
 		 }
-
     }
 } 
