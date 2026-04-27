@@ -124,7 +124,11 @@ ProyectoParcial/
 - Creación de README
 - Correción de README
 - Mejora de interfaz
-
+- Mejora de clasificación de colores mediante normalización por suma
+- Configuracion final de interfaz
+- Cambio de nombre a botones y eliminación de código repetido
+- Actualización README
+- 
 ---
 
 ## ⚠️ Limitaciones
