@@ -29,8 +29,8 @@
 
 //Configuracion botones
 #define BTN_S 				GPIO_NUM_13//Boton seleccion de modo
-#define BTN_R 				GPIO_NUM_14//Boton cambio de led/inicio de proceso automático
-#define BTN_A 				GPIO_NUM_27//Boton resultado de color
+#define BTN_I 				GPIO_NUM_14//Boton cambio de led/inicio de proceso automático
+#define BTN_R 				GPIO_NUM_27//Boton resultado de color
 
 int led_usado=0;
 int center=3;
@@ -57,9 +57,9 @@ void in_btn(){
     gpio_set_direction(BTN_R,GPIO_MODE_INPUT);
     gpio_set_pull_mode(BTN_R,GPIO_PULLUP_ONLY);
 
-    gpio_reset_pin(BTN_A);
-    gpio_set_direction(BTN_A,GPIO_MODE_INPUT);
-    gpio_set_pull_mode(BTN_A,GPIO_PULLUP_ONLY);
+    gpio_reset_pin(BTN_R);
+    gpio_set_direction(BTN_R,GPIO_MODE_INPUT);
+    gpio_set_pull_mode(BTN_R,GPIO_PULLUP_ONLY);
 }
 
 
@@ -121,7 +121,7 @@ void manual(){
 	
 	while (gpio_get_level(BTN_S)==1){
 		int raw = adc1_get_raw(ADC_CHANNEL);
-		if(gpio_get_level(BTN_R)==0){
+		if(gpio_get_level(BTN_I)==0){
 			led_usado++;
 			if (led_usado>3){
 				led_usado=0;
@@ -159,7 +159,7 @@ void manual(){
         vTaskDelay(pdMS_TO_TICKS(500));
         
         
-		if(gpio_get_level(BTN_A)==0){
+		if(gpio_get_level(BTN_R)==0){
 			
         	// Normalizacion por suma
         	float total = r+g+b;
@@ -168,9 +168,7 @@ void manual(){
 			if(total<1) total = 1;
 			float intensidad = (r+g+b)/3;
 
-			if(intensidad<10){
-    			sprintf(lineChar, "Negro");
-			}
+	
 			float rn = (r/total)*100;
 			float gn = (g/total)*100;
 			float bn = (b/total)*100;
@@ -299,9 +297,7 @@ void automatico(){
 	if(total<1) total = 1;
 	float intensidad = (r+g+b)/3;
 
-	if(intensidad<10){
-    	sprintf(lineChar, "Negro");
-	}
+
 	float rn = (r/total)*100;
 	float gn = (g/total)*100;
 	float bn = (b/total)*100;
@@ -384,10 +380,10 @@ void app_main(void){
 		
         	vTaskDelay(pdMS_TO_TICKS(100));	
 		
-		 if(gpio_get_level(BTN_R)==0 && seleccion==0){
+		 if(gpio_get_level(BTN_I)==0 && seleccion==0){
 		 	automatico();
 		 }
-		 if(gpio_get_level(BTN_R)==0 && seleccion==1){
+		 if(gpio_get_level(BTN_I)==0 && seleccion==1){
 		 	manual();
 		 }
     }
