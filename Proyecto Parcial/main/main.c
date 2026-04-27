@@ -36,6 +36,7 @@ int led_usado=0;
 int center=3;
 char lineChar[20];
 SSD1306_t dev;
+char lastLine[20] = "";
 
 //Valores mÃ¡ximos de Rojo, Verde y Azul
 int RM=1240;
@@ -98,6 +99,19 @@ void borrado_leds(){
 	
 }
 
+void OLED(){
+	if(strcmp(lineChar, lastLine) != 0){
+   		ssd1306_clear_screen(&dev, false);
+    	ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+    	strcpy(lastLine, lineChar);
+	}
+}
+
+
+
+
+
+
 void manual(){
 			
 
@@ -138,9 +152,10 @@ void manual(){
 		if(led_usado==3){
 			sprintf(lineChar, "---Listo---");
 		}
-		ssd1306_clear_screen(&dev, false);
-		ssd1306_contrast(&dev, 0xff);
-		ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+		
+		
+
+		
         vTaskDelay(pdMS_TO_TICKS(500));
         
         
@@ -188,12 +203,15 @@ void manual(){
 			else{
     			sprintf(lineChar, "Desconocido");
 			}
-			ssd1306_clear_screen(&dev, false);
-			ssd1306_contrast(&dev, 0xff);
-			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+
         	vTaskDelay(pdMS_TO_TICKS(500));	
 			}
+			
+			
+			OLED();
 		}
+		
+		
 	
 		return;
 	}
@@ -214,10 +232,8 @@ void automatico(){
 	borrado_leds();
 	gpio_set_level(LED_R, 1);
 
-	ssd1306_clear_screen(&dev, false);
-	ssd1306_contrast(&dev, 0xff);
 	sprintf(lineChar, "Estabilizando");
-	ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+	OLED();
 	vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilizaciÃ³n de valores
 			
 	mediciones = 0;
@@ -226,11 +242,8 @@ void automatico(){
 		mediciones += raw;
 		float valor = ((float)raw/RM)*100;
 
-		ssd1306_clear_screen(&dev, false);
-		ssd1306_contrast(&dev, 0xff);
 		sprintf(lineChar, "Rojo: %.0f", valor);
-		ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
-				
+		OLED();		
 		vTaskDelay(pdMS_TO_TICKS(1000));
 	}
 	r = ((float)(mediciones/5.0)/RM)*100;
@@ -239,11 +252,8 @@ void automatico(){
 	// Led verde encendido
 	borrado_leds();
 	gpio_set_level(LED_G, 1);
-
-	ssd1306_clear_screen(&dev, false);
-	ssd1306_contrast(&dev, 0xff);
 	sprintf(lineChar, "Estabilizando");
-	ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+	OLED();
 	vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilizaciÃ³n de valores
 			
 	mediciones = 0;
@@ -252,11 +262,8 @@ void automatico(){
 		mediciones += raw;
 		float valor = ((float)raw/GM)*100;
 
-		ssd1306_clear_screen(&dev, false);
-		ssd1306_contrast(&dev, 0xff);
 		sprintf(lineChar, "Verde: %.0f", valor);
-		ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
-				
+		OLED();
 		vTaskDelay(pdMS_TO_TICKS(1000));
 	}
 	g = ((float)(mediciones/5.0)/GM)*100;
@@ -266,10 +273,8 @@ void automatico(){
 	borrado_leds();
 	gpio_set_level(LED_B, 1);
 
-	ssd1306_clear_screen(&dev, false);
-	ssd1306_contrast(&dev, 0xff);
 	sprintf(lineChar, "Estabilizando");
-	ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+	OLED();
 	vTaskDelay(pdMS_TO_TICKS(2000)); // Esperar 2 segundos para estabilizaciÃ³n de valores
 			
 	mediciones = 0;
@@ -278,11 +283,9 @@ void automatico(){
 		mediciones += raw;
 		float valor = ((float)raw/BM)*100;
 
-		ssd1306_clear_screen(&dev, false);
-		ssd1306_contrast(&dev, 0xff);
+
 		sprintf(lineChar, "Azul: %.0f", valor);
-		ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
-				
+		OLED();
 		vTaskDelay(pdMS_TO_TICKS(1000));
 	}
 	b = ((float)(mediciones/5.0)/BM)*100;
@@ -330,9 +333,9 @@ void automatico(){
 	else{
     	sprintf(lineChar, "Desconocido");
 	}
-	ssd1306_clear_screen(&dev, false);
-	ssd1306_contrast(&dev, 0xff);
-	ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+	
+	OLED();
+	
     vTaskDelay(pdMS_TO_TICKS(500));	
 
 	while (gpio_get_level(BTN_S)==1){
@@ -375,9 +378,10 @@ void app_main(void){
 		if(seleccion==1){
 			sprintf(lineChar, "Manual");
 		}
-		ssd1306_clear_screen(&dev, false);
-			ssd1306_contrast(&dev, 0xff);
-			ssd1306_display_text(&dev, center, lineChar, strlen(lineChar), false);
+		
+		
+		OLED();
+		
         	vTaskDelay(pdMS_TO_TICKS(100));	
 		
 		 if(gpio_get_level(BTN_R)==0 && seleccion==0){

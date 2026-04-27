@@ -1,7 +1,7 @@
 {
     "version":            "1.2",
     "project_name":       "ssd1306",
-    "project_version":    "a4b58b4-dirty",
+    "project_version":    "16ebf63-dirty",
     "project_path":       "C:/Users/santo/practicas_micros_2026/ProyectoParcial/Proyecto Parcial",
     "idf_path":           "C:/Espressif/frameworks/esp-idf-v5.5.2",
     "build_dir":          "C:/Users/santo/practicas_micros_2026/ProyectoParcial/Proyecto Parcial/build",
