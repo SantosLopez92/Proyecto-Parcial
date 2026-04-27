@@ -128,7 +128,8 @@ ProyectoParcial/
 - Configuracion final de interfaz
 - Cambio de nombre a botones y eliminación de código repetido
 - Actualización README
-- 
+- Actualización README
+
 ---
 
 ## ⚠️ Limitaciones
